@@ -2,7 +2,6 @@ Feature: Create user using post api
 
 Background: 
 * url 'https://gorest.co.in'
-
 * def random_string = 
 """
 	function(s){
@@ -12,27 +11,20 @@ Background:
 			text += pattern.charAt(Math.floor(Math.random() * pattern.length()));
 			return text;
 	}
-
 """
 * def randomString = random_string(10)
 * print randomString
 
-* def requestPayload = 
-"""
-{
-	"name": "tom",
-	"gender": "male",
-	"status": "active"
-	}
-"""
-	* requestPayload.email = randomString + "@gmail.com"
-	* print requestPayload
-	
+* def requestPayload = read('classpath:src/test/resources/payload/user.json')
+
+* set requestPayload.email = randomString + "@gmail.com"
+
+* print requestPayload
 
 	Scenario: Create a user with the given data
 	Given path '/public/v2/users' 
 	And request requestPayload
-	And header Authorization = 'Bearer '+ tokenID
+	And header Authorization = 'Bearer '+tokenID
 	When method post 
 	Then status 201
 	And match $.id == '#present'
